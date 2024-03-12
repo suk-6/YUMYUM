@@ -8,18 +8,28 @@ export class KakaoService {
         Authorization: `Bearer ${process.env.KAKAOBOT_API_KEY}`,
     };
 
-    public getUsers() {
-        return fetch(`${KakaoService.baseURL}/users.list`, {
+    public async getUserIDs() {
+        const res = await fetch(`${KakaoService.baseURL}/users.list`, {
             method: 'GET',
             headers: this.headers,
-        }).then((res) => res.json());
+        });
+        const data = await res.json();
+        const users = data.users;
+        const userIDs = users.map((user: any) => parseInt(user.id));
+
+        return userIDs;
     }
-    public getConversation() {}
+
+    public getConversation(userIDs: number[]) {
+        let conversationIDs: number[] = [];
+        for (const userID of userIDs) {
+            conversationIDs.push(userID);
+        }
+    }
     public sendMessage(message: string) {}
 }
 
 !(async function () {
     const kakaoService = new KakaoService();
-    console.log(await kakaoService.getUsers());
-    console.log(process.env.KAKAOBOT_API_KEY);
+    console.log(await kakaoService.getUserIDs());
 })();
