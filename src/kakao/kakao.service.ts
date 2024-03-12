@@ -7,6 +7,8 @@ export class KakaoService {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${process.env.KAKAOBOT_API_KEY}`,
     };
+    public userIDs = [];
+    public conversationIDs = [];
 
     public async getUserIDs() {
         const res = await fetch(`${KakaoService.baseURL}/users.list`, {
@@ -22,13 +24,15 @@ export class KakaoService {
             .map((user: any) => {
                 if (user.department !== 'Teacher') return parseInt(user.id);
             })
-            .filter((id: number) => id);
+            .filter((id: number) => id)
+            .filter((id: number) => id === 10203314);
     }
 
-    public async getConversation(userIDs: number[]) {
+    public async getConversation() {
+        if (this.userIDs.length === 0) this.userIDs = await this.getUserIDs();
         let conversationIDs: string[] = [];
 
-        for (const userID of userIDs) {
+        for (const userID of this.userIDs) {
             const conversationID = await fetch(
                 `${KakaoService.baseURL}/conversations.open`,
                 {
@@ -47,10 +51,12 @@ export class KakaoService {
 
         return conversationIDs;
     }
+
     public async sendMessage(message: string) {
-        for (const conversationID of await this.getConversation(
-            await this.getUserIDs(),
-        )) {
+        if (this.conversationIDs.length === 0)
+            this.conversationIDs = await this.getConversation();
+
+        for (const conversationID of this.conversationIDs) {
             fetch(`${KakaoService.baseURL}/messages.send`, {
                 method: 'POST',
                 headers: this.headers,
