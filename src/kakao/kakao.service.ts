@@ -13,23 +13,52 @@ export class KakaoService {
             method: 'GET',
             headers: this.headers,
         });
-        const data = await res.json();
-        const users = data.users;
-        const userIDs = users.map((user: any) => parseInt(user.id));
+        if (!res.ok) throw new Error('Failed to fetch user list');
 
-        return userIDs;
+        const data = await res.json();
+        if (!data.success) throw new Error('Failed to fetch user list');
+
+        return data.users
+            .map((user: any) => {
+                if (user.department !== 'Teacher') return parseInt(user.id);
+            })
+            .filter((id: number) => id);
     }
 
-    public getConversation(userIDs: number[]) {
-        let conversationIDs: number[] = [];
+    public async getConversation(userIDs: number[]) {
+        let conversationIDs: string[] = [];
+
         for (const userID of userIDs) {
-            conversationIDs.push(userID);
+            const conversationID = await fetch(
+                `${KakaoService.baseURL}/conversations.open`,
+                {
+                    method: 'POST',
+                    headers: this.headers,
+                    body: JSON.stringify({
+                        user_id: userID,
+                    }),
+                },
+            )
+                .then((res) => res.json())
+                .then((data) => data.conversation.id);
+
+            conversationIDs.push(conversationID);
+        }
+
+        return conversationIDs;
+    }
+    public async sendMessage(message: string) {
+        for (const conversationID of await this.getConversation(
+            await this.getUserIDs(),
+        )) {
+            fetch(`${KakaoService.baseURL}/messages.send`, {
+                method: 'POST',
+                headers: this.headers,
+                body: JSON.stringify({
+                    conversation_id: conversationID,
+                    text: message,
+                }),
+            });
         }
     }
-    public sendMessage(message: string) {}
 }
-
-!(async function () {
-    const kakaoService = new KakaoService();
-    console.log(await kakaoService.getUserIDs());
-})();
