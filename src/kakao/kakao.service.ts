@@ -12,10 +12,13 @@ export class KakaoService {
     public conversationIDs = [];
 
     public async getUserIDs() {
-        const res = await fetch(`${KakaoService.baseURL}/users.list`, {
-            method: 'GET',
-            headers: this.headers,
-        });
+        const res = await fetch(
+            `${KakaoService.baseURL}/users.list?limit=100`,
+            {
+                method: 'GET',
+                headers: this.headers,
+            },
+        );
         if (!res.ok) throw new Error('Failed to fetch user list');
 
         const data = await res.json();
