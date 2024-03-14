@@ -1,5 +1,6 @@
 export interface dietResult {
-    title: string;
-    diet: [string];
-    kcal: string;
+    status: boolean;
+    title?: string;
+    diet?: [string];
+    kcal?: string;
 }

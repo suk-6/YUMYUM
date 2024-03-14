@@ -13,6 +13,7 @@ export class AppService {
 
     public async sendTodayDiet() {
         const todayDiet = await this.neisService.getTodayDiet();
-        this.kakaoService.sendBlockMessage(todayDiet);
+        if (todayDiet.status)
+            await this.kakaoService.sendBlockMessage(todayDiet);
     }
 }
