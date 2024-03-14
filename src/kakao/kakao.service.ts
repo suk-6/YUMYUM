@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { dietResult } from 'src/neis/neis.model';
 
 @Injectable()
 export class KakaoService {
@@ -24,8 +25,8 @@ export class KakaoService {
             .map((user: any) => {
                 if (user.department !== 'Teacher') return parseInt(user.id);
             })
-            .filter((id: number) => id);
-        // .filter((id: number) => id === 10203314);
+            .filter((id: number) => id)
+            .filter((id: number) => id === 10203314);
     }
 
     public async getConversation() {
@@ -65,6 +66,42 @@ export class KakaoService {
                     text: message,
                 }),
             });
+        }
+    }
+
+    public async sendBlockMessage(message: dietResult) {
+        if (this.conversationIDs.length === 0)
+            this.conversationIDs = await this.getConversation();
+
+        const blockMessage = {
+            text: `${message.title}\n\n${message.diet}\n\n${message.kcal}`,
+            blocks: [
+                {
+                    type: 'header',
+                    text: message.title,
+                    style: 'blue',
+                },
+                {
+                    type: 'text',
+                    text: `${message.diet}\n\n${message.kcal}`,
+                },
+            ],
+        };
+
+        for (const conversationID of this.conversationIDs) {
+            fetch(`${KakaoService.baseURL}/messages.send`, {
+                method: 'POST',
+                headers: this.headers,
+                body: JSON.stringify({
+                    conversation_id: conversationID,
+                    text: blockMessage.text,
+                    blocks: blockMessage.blocks,
+                }),
+            })
+                .then((res) => res.json())
+                .then((data) => {
+                    if (!data.success) console.error(data);
+                });
         }
     }
 }
