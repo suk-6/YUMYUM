@@ -22,8 +22,8 @@ export class AppService {
     public async setSchedule() {
         const rule = new schedule.RecurrenceRule();
         rule.dayOfWeek = [new schedule.Range(1, 5)];
-        rule.hour = 8;
-        rule.minute = 50;
+        rule.hour = 9;
+        rule.minute = 0;
 
         schedule.scheduleJob(rule, () => {
             this.sendTodayDiet();
