@@ -28,8 +28,7 @@ export class KakaoService {
             .map((user: any) => {
                 if (user.department !== 'Teacher') return parseInt(user.id);
             })
-            .filter((id: number) => id)
-            .filter((id: number) => id === 10203314);
+            .filter((id: number) => id);
     }
 
     public async getConversation() {
