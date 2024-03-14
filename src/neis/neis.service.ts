@@ -29,10 +29,11 @@ export class NeisService {
             item.trim(),
         );
         const kcal = dietInfo.CAL_INFO;
+
+        return {
+            title: `${month}월 ${day}일 급식`,
+            diet,
+            kcal,
+        };
     }
 }
-
-(() => {
-    const neis = new NeisService(new HttpService());
-    neis.getTodayDiet();
-})();
