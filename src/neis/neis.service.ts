@@ -1,6 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { lastValueFrom } from 'rxjs';
+import { dietResult } from './neis.model';
 
 @Injectable()
 export class NeisService {
@@ -30,10 +31,12 @@ export class NeisService {
         );
         const kcal = dietInfo.CAL_INFO;
 
-        return {
+        const result: dietResult = {
             title: `${month}월 ${day}일 급식`,
             diet,
             kcal,
         };
+
+        return result;
     }
 }

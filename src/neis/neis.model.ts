@@ -1,5 +1,5 @@
 export interface dietResult {
     title: string;
-    diet: string;
+    diet: [string];
     kcal: string;
 }

@@ -74,7 +74,7 @@ export class KakaoService {
             this.conversationIDs = await this.getConversation();
 
         const blockMessage = {
-            text: `${message.title}\n\n${message.diet}\n\n${message.kcal}`,
+            text: `${message.title}\n\n${message.diet.join('\n')}\n\n${message.kcal}`,
             blocks: [
                 {
                     type: 'header',
@@ -83,7 +83,7 @@ export class KakaoService {
                 },
                 {
                     type: 'text',
-                    text: `${message.diet}\n\n${message.kcal}`,
+                    text: `${message.diet.join('\n')}\n\n${message.kcal}`,
                 },
             ],
         };
