@@ -2,6 +2,9 @@ FROM node:18-alpine
 
 LABEL maintainer="https://suk.kr"
 
+ENV NODE_ENV=production
+ENV TZ=Asia/Seoul
+
 WORKDIR /app
 
 COPY package.json ./
